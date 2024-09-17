@@ -30,3 +30,24 @@ def test_read_user(client):
       'id': 1
    }
    ]}
+
+def test_update_user(client):
+   response = client.put(
+      '/users/1',
+      json={
+         'password': '123',
+         'username': 'testusername2',
+         'email': 'test@test.com',
+         'id': 1
+      }
+      )
+   assert response.json() == {
+      'username': 'testusername2',
+      'email': 'test@test.com',
+      'id': 1
+   }
+
+def test_delete_user(client):
+   response = client.delete('/users/1')
+
+   assert response.json() == {'message':'User deleted'}

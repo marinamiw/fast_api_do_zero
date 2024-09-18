@@ -51,3 +51,19 @@ def test_delete_user(client):
    response = client.delete('/users/1')
 
    assert response.json() == {'message':'User deleted'}
+
+def test_search_user(client):
+    response = client.get('/users/1')
+    
+    assert response.status_code == 200
+    assert response.json() == {
+        'id': 1,
+        'username': 'testusername',
+        'email': 'test@test.com'
+    }
+
+def test_search_user_not_found(client):
+    response = client.get('/users/999')  # ID que não existe
+    
+    assert response.status_code == 404
+    assert response.json() == {'detail': 'User not found'}

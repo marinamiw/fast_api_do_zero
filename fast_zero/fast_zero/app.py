@@ -8,7 +8,6 @@ app = FastAPI()
 
 database = []
 
-
 @app.post('/users/', status_code=HTTPStatus.CREATED, response_model=UserPublic)
 def create_user(user: UserSchema):
 

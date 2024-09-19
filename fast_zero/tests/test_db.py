@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 
 
 def test_create_user():
-    engine = create_engine('sqlite:///database.db')
+    engine = create_engine('sqlite:///:memory:')
 
     table_registry.metadata.create_all(engine)
 

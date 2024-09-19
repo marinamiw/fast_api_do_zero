@@ -1,10 +1,10 @@
 from fast_zero.models import User, table_registry
 
 from sqlalchemy.orm import Session
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, select
 
 
-def test_create_user():
+def test_create_user(session): #fixture feita para facilitar 
     engine = create_engine('sqlite:///:memory:')
 
     table_registry.metadata.create_all(engine)
@@ -14,6 +14,9 @@ def test_create_user():
 
     session.add(user)
     session.commit()
-    session.refresh(user)
+    
+    result = session.scalar(
+        select(User).where(User.email == 'test@test.com')
+        )
 
-    assert user.id == 1
+    assert result.username == 'test'

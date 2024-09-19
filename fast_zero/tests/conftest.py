@@ -18,7 +18,7 @@ def session():
     table_registry.metadata.create_all(engine)
 
     #gerenciamento de contexto
-    with Session(engine) as engine:
+    with Session(engine) as session:
         yield session #delimita o setup (rodar antes do teste) e depois do yield (tear down) desfaz a operação que fez
 
         #quando pegar o objeto session, vai rodar ate essa linha e ai vai parar até esse objeto q foi dado yield, é o que vai cair dentro do parametro do teste la no test_db

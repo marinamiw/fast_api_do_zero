@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+from fast_zero.schemas import UserPublic
 
 def test_create_user(client):
 
@@ -19,17 +20,23 @@ def test_create_user(client):
       'id': 1
    }
 
-
+#se nao tiver ninguem no BD
 def test_read_user(client):
    response = client.get('/users/')
    assert response.status_code == HTTPStatus.OK
-   assert response.json() == {'users': [
-   {
-      'username': 'testusername',
-      'email': 'test@test.com',
-      'id': 1
-   }
-   ]}
+   assert response.json() == {'users': []} 
+
+#se tiver 
+def test_read_user_with_user(client, user): #user eh um objeto do sql alchemy feito no conftest que simula um cadatro de usuario (retorna os atributos publicos dele pelo formato da base de dados - é uma fixture), so que para realizar se a resposta do teste é esse modelo, precisamos converter ele em modelo do pydantic pois o teste retorna em pydantic e nao em sql alchemy. Portanto, precisamos do model validate para converter esse objeto em objeto de UserPublic(pydantic)
+   user_schema = UserPublic.model_validate(user).model_dump() #model validade pega os atributos do user, que é um modelo do sql alchemy,e ira converter eles em schema, modelo do pydantic
+  #no caso model validate faz a conversão de um pbjeto qualquer para um modelo do pydantic
+   response = client.get('/users/')
+  
+   assert response.status_code == HTTPStatus.OK
+   assert response.json() == {'users': [user_schema]} #UserPublic
+    
+
+
 
 def test_update_user(client):
    response = client.put(

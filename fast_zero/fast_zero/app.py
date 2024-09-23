@@ -1,7 +1,7 @@
 from http import HTTPStatus
 from sqlalchemy import select
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fast_zero.models import User
 from fast_zero.schemas import UserDB, UserList, UserPublic, UserSchema, Message
 from fast_zero.settings import Settings
@@ -12,9 +12,7 @@ app = FastAPI()
 database = []
 
 @app.post('/users/', status_code=HTTPStatus.CREATED, response_model=UserPublic)
-def create_user(user: UserSchema):
-     #iniciamos sessao
-     session = get_session()
+def create_user(user: UserSchema, session = Depends(get_session)): #vai executar a função get session e o resultado vai ser passado como argumento session
      db_user = session.scalar(
           select(User).where(
                (User.username == user.username) | (User.email == user.email)
@@ -46,7 +44,7 @@ def create_user(user: UserSchema):
 
 
 @app.get('/users/', response_model=UserList)
-def read_users():
+def read_users(session = Depends(get_session)): #funçao depende q session seja executada
      return {'users': database}
 
 

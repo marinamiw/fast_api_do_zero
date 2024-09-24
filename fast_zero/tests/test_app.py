@@ -21,6 +21,31 @@ def test_create_user(client):
       'id': 1
    }
 
+def test_create_user_username_already_exists(client, user):
+
+   response = client.post('/users/',
+   json = {
+      'username': user.username,
+      'password': 'password',
+      'email':'emailbacana@test.com'
+   }
+   )
+   assert response.status_code == HTTPStatus.BAD_REQUEST
+   assert response.json() == {'detail': "Username already exists"}
+
+def test_create_user_email_already_exists(client, user):
+
+   response = client.post('/users/',
+   json = {
+      'username': 'usernamelouco',
+      'password': 'password',
+      'email': user.email
+   }
+   )
+   assert response.status_code == HTTPStatus.BAD_REQUEST
+   assert response.json() == {'detail': "Email already exists"}
+
+
 
 # se nao tiver ninguem no BD
 def test_read_user(client):
@@ -71,12 +96,14 @@ def test_update_user_not_found(client):
 
 
 def test_search_user(client, user):
-    response = client.get('/users/1')
-    user_schema = UserPublic.model_validate(user).model_dump()
+    response = client.get(f'/users/{user.id}')
     assert response.status_code == HTTPStatus.OK
-    assert response.json() == user_schema
+    assert response.json() == {
+       'username': user.username,
+       'email': user.email,
+       'id': user.id
+    }
    
-
 
 def test_search_user_not_found(client):
     response = client.get('/users/999')  # ID que não existe

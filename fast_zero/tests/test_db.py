@@ -1,15 +1,14 @@
-from fast_zero.models import User, table_registry
+from sqlalchemy import select
 
-from sqlalchemy.orm import Session
-from sqlalchemy import create_engine, select
+from fast_zero.models import User
 
 
-def test_create_user(session): #fixture feita para facilitar      
-    user = User(username = 'marina', email = 'marinamiw@test.com', password = 'secret')
+def test_create_user(session):  # fixture feita para facilitar
+    user = User(username='marina', email='marinamiw@test.com', password='secret')
 
     session.add(user)
     session.commit()
-    
+
     result = session.scalar(
         select(User).where(User.email == 'marinamiw@test.com')
         )
